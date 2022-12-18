@@ -1,3 +1,17 @@
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+//
+// Tyler(UnclassedPenguin) Matrix Rain 2022
+//
+// Author: Tyler(UnclassedPenguin)
+//    URL: https://unclassed.ca
+// GitHub: https://github.com/UnclassedPenguin
+// Description: I just wanted to create the matrix rain. Thanks to
+// Emily Xie, who was a guest on the youtube channel The Coding Train.
+//
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+
 package main
 
 import (

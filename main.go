@@ -157,7 +157,7 @@ func main() {
   for i := 0; i < x; i++ {
     if i % 3 == 0 {
       stream := Stream{
-        totalSymbols: rand.Intn(y),
+        totalSymbols: rand.Intn(y-10)+10,
       }
       speed := rand.Intn(2)+1
       //speed := 1

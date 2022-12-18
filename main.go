@@ -28,6 +28,7 @@ type Symbol struct {
   y int
   speed int
   value int
+  first bool
 }
 
 // Rain causes the symbol to advance by its speed every "frame"
@@ -35,10 +36,10 @@ type Symbol struct {
 func (sym *Symbol) rain(s tcell.Screen) {
   _, y := s.Size()
 
-  sym.y += sym.speed
   if sym.y > y {
     sym.y = 0
   }
+  sym.y += sym.speed
 }
 
 // Picks a random Katakana character for symbol
@@ -49,11 +50,16 @@ func (sym *Symbol) setToRandomSymbol() {
 
 // Draws the symbol to the screen
 func (sym *Symbol) render(s tcell.Screen, style tcell.Style) {
+  style2 := tcell.StyleDefault.Foreground(tcell.ColorPaleGreen)
   rand.Seed(time.Now().UnixNano())
   if rand.Intn(10) < 2 {
     sym.setToRandomSymbol()
   }
-  writeToScreen(s, style, sym.x, sym.y, string(sym.value))
+  if !sym.first {
+    writeToScreen(s, style, sym.x, sym.y, string(sym.value))
+  } else {
+    writeToScreen(s, style2, sym.x, sym.y, string(sym.value))
+  }
 }
 
 // A stream is an array of symbols
@@ -64,23 +70,37 @@ type Stream struct {
 
 // Creates the array of symbols
 func (stream *Stream) generateSymbols(x, y, speed int) {
+  rand.Seed(time.Now().UnixNano())
+  rand := rand.Intn(10)
+  first := rand < 3
   for i := 0; i < stream.totalSymbols; i++ {
     sym := Symbol{
       x: x,
       y: y-i,
       speed: speed,
+      first: first,
     }
     sym.setToRandomSymbol()
     stream.symbols = append(stream.symbols, sym)
+    first = false
   }
 }
 
 // Draws a stream to the screen
 func (stream *Stream) render(s tcell.Screen, style tcell.Style) {
-    for i := 0; i < stream.totalSymbols; i++ {
-      stream.symbols[i].render(s, style)
-      stream.symbols[i].rain(s)
+  for i, sym := range stream.symbols {
+    for j := 0; j < len(stream.symbols); j++ {
+      if i != j {
+        if sym.y == stream.symbols[j].y {
+          stream.symbols[i].y -= 1
+        }
+      }
     }
+  }
+  for i := 0; i < stream.totalSymbols; i++ {
+    stream.symbols[i].render(s, style)
+    stream.symbols[i].rain(s)
+  }
 }
 
 // This is used just to write strings to the screen.
@@ -105,7 +125,7 @@ func main() {
 
   style := tcell.StyleDefault.Foreground(tcell.ColorGreen)
 
-  x, _ := s.Size()
+  x, y := s.Size()
 
   go func() {
     for {
@@ -135,7 +155,7 @@ func main() {
   for i := 0; i < x; i++ {
     if i % 3 == 0 {
       stream := Stream{
-        totalSymbols: rand.Intn(x/2),
+        totalSymbols: rand.Intn(y),
       }
       speed := rand.Intn(2)+1
       //speed := 1
@@ -151,7 +171,7 @@ func main() {
       stream.render(s, style)
     }
     s.Sync()
-    time.Sleep(time.Millisecond * 100)
+    time.Sleep(time.Millisecond * 60)
     s.Clear()
   }
 }

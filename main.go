@@ -51,6 +51,8 @@ func (sym *Symbol) setToRandomSymbol() {
 // Draws the symbol to the screen
 func (sym *Symbol) render(s tcell.Screen, style tcell.Style) {
   style2 := tcell.StyleDefault.Foreground(tcell.ColorPaleGreen)
+  //style3 := tcell.StyleDefault.Foreground(tcell.ColorTurquoise)
+  //style4 := tcell.StyleDefault.Foreground(tcell.ColorPaleTurquoise)
   rand.Seed(time.Now().UnixNano())
   if rand.Intn(10) < 2 {
     sym.setToRandomSymbol()

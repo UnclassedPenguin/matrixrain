@@ -172,7 +172,7 @@ func main() {
     for _, stream := range streams {
       stream.render(s, style)
     }
-    s.Sync()
+    s.Show()
     time.Sleep(time.Millisecond * 60)
     s.Clear()
   }
